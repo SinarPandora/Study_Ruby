@@ -1,0 +1,72 @@
+# 创建数据库
+CREATE DATABASE Ali_DB;
+
+# 列出全部数据库
+SHOW DATABASES;
+
+# 列出指定 A 开头数据库(不区分大小写)
+SHOW DATABASES like 'A.*';
+
+# 列出 Ali 数据库详细信息
+DESCRIBE DATABASE Ali_DB;
+
+# 使用该数据库进行操作
+USE Ali_DB;
+
+# 修改数据库名
+ALTER DATABASE Ali_DB RENAME TO Ali;
+
+# 合并表(IF NOT EXISTS 可以省略，避免已经存在的时候报错)
+CREATE TABLE IF NOT EXISTS user_main
+(
+    user_info STRUCT
+    <
+        user_id:INT,
+        age:INT,
+        Sex:CHAR(1)
+    >,
+    item_info STRUCT
+    <
+        item_id:INT,
+        cat_id:INT,
+        terms:STRING,
+        img_data:STRING
+    >,
+    create_at INT,
+    PARTITIONE BY
+    (
+        item_id INT
+    )
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ' ';
+
+# 列出全部表名
+SHOW TABLES in Ali;
+
+# 列出名字带有u的表名
+SHOW TABLES 'u.*';
+
+# 列出 user_main 表的情况（仅当 USE Ali 的时候可用）
+DESCRIBE user_main;
+
+# 列出 Ali 数据库里 user_main 表的情况（是否 USE Ali 都可以用，
+引用数据库名的情况，以下不再特殊说明）
+DESCRIBE Ali.user_main;
+
+# 修改表名
+ALTER TABLE user_main RENAME TO user_table;
+
+# 为表创建分区
+ALTER TABLE user_table add if not exists 
+     partition(city=”beijing”,state=”China”) 
+     location '/usr/local/hive/warehouse/usr2/China/beijing'; 
+
+# 删除表
+DROP TABLE user_table;
+
+# 删除数据库（为空时）
+DROP DATABASE Ali;
+
+# 删除数据库（强制）
+DROP DATABASE Ali CASCADE;
+
